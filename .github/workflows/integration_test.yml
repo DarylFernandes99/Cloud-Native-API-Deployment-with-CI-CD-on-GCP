@@ -1,0 +1,44 @@
+name: Integration Tests
+
+on:
+  pull_request:
+    branches: [ "main" ]
+  
+  workflow_dispatch:
+
+jobs:
+  integration-test:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+
+    env:
+      DOTENV_FILE: ${{ secrets.ENV_FILE }}
+      DB_DATABASE: webapp
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+    steps:
+      - name: Checkout Repository
+        id: checkout_repository
+        uses: actions/checkout@v3
+
+      - name: Create .env file
+        id: create_env_file
+        run: |
+          echo "$DOTENV_FILE" > .env
+
+      - name: Set up MySQL
+        id: setup_mysql
+        run: |
+          sudo /etc/init.d/mysql start
+
+      - name: Set up Python
+        id: setup_python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+
+      - name: Create flask database migrations and run tests
+        id: create_flask_db_migrations_and_run_tests
+        run: |
+          chmod 755 run_tests.sh
+          source run_tests.sh
