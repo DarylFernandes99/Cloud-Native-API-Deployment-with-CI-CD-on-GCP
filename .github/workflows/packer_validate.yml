@@ -1,0 +1,54 @@
+name: Validate Packer files
+
+on:
+  pull_request:
+    branches: [ "main" ]
+  
+  workflow_dispatch:
+
+jobs:
+  packer-validate:
+    name: Validate Packer
+    runs-on: ubuntu-latest
+
+    env:
+      PACKER_CONFIG: ${{ secrets.PACKER_CONFIG }}
+
+    steps:
+      - name: Checkout Repository
+        id: checkout_repository
+        uses: actions/checkout@v3
+      
+      - name: Install Packer
+        uses: hashicorp/setup-packer@main
+        with:
+          version: 'latest'
+      
+      - name: Create zip file
+        run: |
+          sudo apt install zip
+          zip -r ./packer/files/webapp-main.zip . -x '*packer*' -x '*terraform*' -x '*.git*'
+
+      - name: Initialize Packer
+        id: initialize_packer
+        run: |
+          cd packer/
+          packer init .
+      
+      - name: Format Packer
+        id: format_packer
+        run: |
+          cd packer/
+          packer fmt -check .
+          test $? -eq 0 || (echo "Packer files are not formatted" && exit 1)
+
+      - name: Create Packer config file
+        id: create_packer_config_file
+        run: |
+          echo "$PACKER_CONFIG" > ./packer/variables.auto.pkrvars.hcl
+
+      - name: Validate Packer
+        id: validate_packer
+        run: |
+          cd packer/
+          packer validate .

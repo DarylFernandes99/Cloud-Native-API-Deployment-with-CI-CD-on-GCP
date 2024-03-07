@@ -1,0 +1,95 @@
+name: Build Packer Image
+
+on:
+  push:
+    branches: [ "main" ]
+  
+  workflow_dispatch:
+
+jobs:
+  build_artifact:
+    name: Build Artifact
+    runs-on: ubuntu-latest
+
+    env:
+      DOTENV_FILE: ${{ secrets.PACKER_ENV_FILE }}
+    
+    steps:
+      - name: Checkout Repository
+        id: checkout_repository
+        uses: actions/checkout@v3
+
+      # - name: Create .env file
+      #   id: create_env_file
+      #   run: |
+      #     echo "$DOTENV_FILE" > .env
+      
+      - name: Create zip file
+        run: |
+          sudo apt install zip
+          zip -r webapp-main.zip . -x '*packer*' -x '*terraform*' -x '*.git*'
+        
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Webapp
+          path: webapp-main.zip
+  
+  packer-build:
+    needs: build_artifact
+    name: Build Packer image
+    runs-on: ubuntu-latest
+
+    env:
+      PACKER_CONFIG: ${{ secrets.PACKER_CONFIG }}
+      GCP_CREDENTIALS_JSON: ${{ secrets.GCP_CREDENTIALS_JSON }}
+
+    steps:
+      - name: Checkout Repository
+        id: checkout_repository
+        uses: actions/checkout@v3
+        
+      - uses: actions/download-artifact@v4
+        with:
+          name: Webapp
+          path: ./packer/files/
+      
+      - name: Install Packer
+        uses: hashicorp/setup-packer@main
+        with:
+          version: 'latest'
+      
+      - name: 'Authenticate to Google Cloud'
+        id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ env.GCP_CREDENTIALS_JSON }}'
+      
+      - name: Initialize Packer
+        id: initialize_packer
+        run: |
+          cd packer/
+          packer init .
+        
+      - name: Format Packer
+        id: format_packer
+        run: |
+          cd packer/
+          packer fmt -check .
+          test $? -eq 0 || (echo "Packer files are not formatted" && exit 1)
+
+      - name: Create packer config file
+        id: create_packer_config_file
+        run: |
+          echo "$PACKER_CONFIG" > ./packer/variables.auto.pkrvars.hcl
+
+      - name: Validate Packer
+        id: validate_packer
+        run: |
+          cd packer/
+          packer validate .
+
+      - name: Build Packer
+        id: build_packer
+        run: |
+          cd packer/
+          packer build .
