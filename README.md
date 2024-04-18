@@ -33,7 +33,7 @@ $ gcloud auth application-default revoke
     <li>Navigate to google cloud dashboard: <a href="https://console.cloud.google.com/welcome/new">https://console.cloud.google.com/welcome/new</a></li>
     <li>From the Navigation Menu > APIs and services > Library</li>
     <li>Enable the following APIs:</li>
-        <style>
+        <!-- <style>
             .grid-container {
                 display: grid;
                 /* gap: 10px; */
@@ -58,51 +58,30 @@ $ gcloud auth application-default revoke
             <div>
                 <ul>
                     <li>Compute Engine API</li>
-                    <li>Cloud SQL Admin API</li>
-                    <li>Service Networking API</li>
-                </ul>
-            </div>
-            <div>
                 <ul>
-                    <li>Cloud Source Repositories API</li>
-                    <li>Identity and Access Management (IAM) API</li>
-                    <li>Cloud Monitoring API</li>
-                </ul>
             </div>
-            <div>
-                <ul>
-                    <li>Cloud Logging API</li>
-                    <li>Serverless VPC Access API</li>
-                    <li>Eventarc API</li>
-                </ul>
-            </div>
-            <div>
-                <ul>
-                    <li>Cloud Deployment Manager V2 API</li>
-                    <li>Cloud DNS API</li>
-                    <li>Cloud Functions API</li>
-                </ul>
-            </div>
-            <div>
-                <ul>
-                    <li>Artifact Registry API</li>
-                    <li>Cloud Pub/Sub API</li>
-                    <li>Cloud Build API</li>
-                </ul>
-            </div>
-            <div>
-                <ul>
-                    <li>Service Usage API</li>
-                    <li>Secret Manager API</li>
-                    <li>Certificate Manager API</li>
-                </ul>
-            </div>
-            <div>
-                <ul>
-                    <li>Cloud Key Management Service (KMS) API</li>
-                </ul>
-            </div>
-        </div>
+        </div> -->
+        <ul>
+            <li>Compute Engine API</li>
+            <li>Cloud SQL Admin API</li>
+            <li>Service Networking API</li>
+            <li>Cloud Source Repositories API</li>
+            <li>Identity and Access Management (IAM) API</li>
+            <li>Cloud Monitoring API</li>
+            <li>Cloud Logging API</li>
+            <li>Serverless VPC Access API</li>
+            <li>Eventarc API</li>
+            <li>Cloud Deployment Manager V2 API</li>
+            <li>Cloud DNS API</li>
+            <li>Cloud Functions API</li>
+            <li>Artifact Registry API</li>
+            <li>Cloud Pub/Sub API</li>
+            <li>Cloud Build API</li>
+            <li>Service Usage API</li>
+            <li>Secret Manager API</li>
+            <li>Certificate Manager API</li>
+            <li>Cloud Key Management Service (KMS) API</li>
+        </ul>
     <li>After enabling the APIs it may take about 10-15 mins to be activated</li>
 </ol>
 

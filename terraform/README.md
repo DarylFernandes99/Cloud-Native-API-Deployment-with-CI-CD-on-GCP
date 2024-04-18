@@ -2,7 +2,7 @@
 This project utilizes Terraform for the dynamic construction of infrastructure on the Google Cloud Platform (GCP). Configuration details are conveniently provided through a variable file, ensuring flexibility and ease of customization.
 
 ## Resources used
-<style>
+<!-- <style>
     .grid-container {
         display: grid;
         /* gap: 10px; */
@@ -23,62 +23,54 @@ This project utilizes Terraform for the dynamic construction of infrastructure o
         }
     }
 </style>
+
 <div class="grid-container">
     <div>
         <ul>
             <li>VPC [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network">Link</a>]</li>
-            <li>Global Address [<a href="https://registry.terraform.io/providers/hashicorp/docs/resources/compute_global_address">Link</a>]</li>
-            <li>SQL Database [<a href="https://registry.terraform.io/providers/latest/docs/resources/sql_database">Link</a>]</li>
-            <li>KMS Crypto Key [<a href="https://registry.terraform.io/providers/latest/docs/resources/kms_crypto_key">Link</a>]</li>
-            <li>Google Secret Manager Version [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/secret_manager_secret_version">Link</a>]</li>
-            <li>Storage Bucket [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket">Link</a>]</li>
-            <li>Cloud Function V2 [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloudfunctions2_function">Link</a>]</li>
-            <li>Global Forwarding Rule [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_global_forwarding_rule">Link</a>]</li>
-            <li>Backend Service [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_backend_service">Link</a>]</li>
-            <li>Random Password [<a href="https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password">Link</a>]</li>
         </ul>
     </div>
-    <div>
-        <ul>
-            <li>Subnet [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_subnetwork">Link</a>]</li>
-            <li>Peering Connection [<a href="https://registry.terraform.io/providers/latest/docs/resources/service_networking_connection">Link</a>]</li>
-            <li>SQL User [<a href="https://registry.terraform.io/providers/latest/docs/resources/sql_user">Link</a>]</li>
-            <li>Service Account [<a href="https://registry.terraform.io/providers/latest/docs/resources/sql_user">Link</a>]</li>
-            <li>VM Instance [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance">Link</a>]</li>
-            <li>Storage Bucket Object [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_object">Link</a>]</li>
-            <li>SSL Certificate [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_managed_ssl_certificate">Link</a>]</li>
-            <li>Regional Instance Template [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_region_instance_template">Link</a>]</li>
-            <li>Regional Autoscaler [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_region_autoscaler">Link</a>]</li>
-            <li>Network Peering Routes Config [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network_peering_routes_config">Link</a>]</li>
-        </ul>
-    </div>
-    <div>
-        <ul>
-            <li>Routes [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_route">Link</a>]</li>
-            <li>Serverless VPC Access connector [<a href="https://registry.terraform.io/providers/latest/docs/resources/vpc_access_connector">Link</a>]</li>
-            <li>KMS Key Ring [<a href="https://registry.terraform.io/providers/latest/docs/resources/kms_key_ring">Link</a>]</li>
-            <li>IAM Policy [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/google_project_iam">Link</a>]</li>
-            <li>DNS Managed Zone [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/dns_managed_zone">Link</a>]</li>
-            <li>Pub/Sub Topic [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/pubsub_topic">Link</a>]</li>
-            <li>URL Map [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_url_map">Link</a>]</li>
-            <li>Health Check [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_health_check">Link</a>]</li>
-            <li>Template File [<a href="https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file">Link</a>]</li>
-            <li>Firewall [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall">Link</a>]</li>
-        </ul>
-    </div>
-    <div>
-        <ul>
-            <li>SQL Database Instance [<a href="https://registry.terraform.io/providers/latest/docs/resources/sql_database_instance">Link</a>]</li>
-            <li>KMS Crypto Key [<a href="https://registry.terraform.io/providers/latest/docs/resources/kms_crypto_key">Link</a>]</li>
-            <li>Google Secret Manager [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/secret_manager_secret">Link</a>]</li>
-            <li>DNS Records Set [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/dns_record_set">Link</a>]</li>
-            <li>Pub/Sub Topic Schema [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/pubsub_schema">Link</a>]</li>
-            <li>Target HTTPS Proxy [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_target_https_proxy">Link</a>]</li>
-            <li>Region Instance Group Manager [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_region_instance_group_manager">Link</a>]</li>
-            <li>Random ID [<a href="https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id">Link</a>]</li>
-        </ul>
-    </div>
-</div>
+</div> -->
+<ul>
+    <li>VPC [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network">Link</a>]</li>
+    <li>Global Address [<a href="https://registry.terraform.io/providers/hashicorp/docs/resources/compute_global_address">Link</a>]</li>
+    <li>SQL Database [<a href="https://registry.terraform.io/providers/latest/docs/resources/sql_database">Link</a>]</li>
+    <li>KMS Crypto Key [<a href="https://registry.terraform.io/providers/latest/docs/resources/kms_crypto_key">Link</a>]</li>
+    <li>Google Secret Manager Version [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/secret_manager_secret_version">Link</a>]</li>
+    <li>Storage Bucket [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket">Link</a>]</li>
+    <li>Cloud Function V2 [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloudfunctions2_function">Link</a>]</li>
+    <li>Global Forwarding Rule [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_global_forwarding_rule">Link</a>]</li>
+    <li>Backend Service [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_backend_service">Link</a>]</li>
+    <li>Random Password [<a href="https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password">Link</a>]</li>
+    <li>Subnet [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_subnetwork">Link</a>]</li>
+    <li>Peering Connection [<a href="https://registry.terraform.io/providers/latest/docs/resources/service_networking_connection">Link</a>]</li>
+    <li>SQL User [<a href="https://registry.terraform.io/providers/latest/docs/resources/sql_user">Link</a>]</li>
+    <li>Service Account [<a href="https://registry.terraform.io/providers/latest/docs/resources/sql_user">Link</a>]</li>
+    <li>VM Instance [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance">Link</a>]</li>
+    <li>Storage Bucket Object [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_object">Link</a>]</li>
+    <li>SSL Certificate [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_managed_ssl_certificate">Link</a>]</li>
+    <li>Regional Instance Template [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_region_instance_template">Link</a>]</li>
+    <li>Regional Autoscaler [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_region_autoscaler">Link</a>]</li>
+    <li>Network Peering Routes Config [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network_peering_routes_config">Link</a>]</li>
+    <li>Routes [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_route">Link</a>]</li>
+    <li>Serverless VPC Access connector [<a href="https://registry.terraform.io/providers/latest/docs/resources/vpc_access_connector">Link</a>]</li>
+    <li>KMS Key Ring [<a href="https://registry.terraform.io/providers/latest/docs/resources/kms_key_ring">Link</a>]</li>
+    <li>IAM Policy [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/google_project_iam">Link</a>]</li>
+    <li>DNS Managed Zone [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/dns_managed_zone">Link</a>]</li>
+    <li>Pub/Sub Topic [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/pubsub_topic">Link</a>]</li>
+    <li>URL Map [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_url_map">Link</a>]</li>
+    <li>Health Check [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_health_check">Link</a>]</li>
+    <li>Template File [<a href="https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file">Link</a>]</li>
+    <li>Firewall [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall">Link</a>]</li>
+    <li>SQL Database Instance [<a href="https://registry.terraform.io/providers/latest/docs/resources/sql_database_instance">Link</a>]</li>
+    <li>KMS Crypto Key [<a href="https://registry.terraform.io/providers/latest/docs/resources/kms_crypto_key">Link</a>]</li>
+    <li>Google Secret Manager [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/secret_manager_secret">Link</a>]</li>
+    <li>DNS Records Set [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/dns_record_set">Link</a>]</li>
+    <li>Pub/Sub Topic Schema [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/pubsub_schema">Link</a>]</li>
+    <li>Target HTTPS Proxy [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_target_https_proxy">Link</a>]</li>
+    <li>Region Instance Group Manager [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_region_instance_group_manager">Link</a>]</li>
+    <li>Random ID [<a href="https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id">Link</a>]</li>
+</ul>
 
 
 # Install Google Cloud CLI
@@ -111,55 +103,27 @@ $ gcloud auth application-default revoke
     <li>Navigate to google cloud dashboard: <a href="https://console.cloud.google.com/welcome/new">https://console.cloud.google.com/welcome/new</a></li>
     <li>From the Navigation Menu > APIs and services > Library</li>
     <li>Enable the following APIs:</li>
-    <div class="grid-container">
-        <div>
-            <ul>
-                <li>Compute Engine API</li>
-                <li>Cloud SQL Admin API</li>
-                <li>Service Networking API</li>
-            </ul>
-        </div>
-        <div>
-            <ul>
-                <li>Cloud Source Repositories API</li>
-                <li>Identity and Access Management (IAM) API</li>
-                <li>Cloud Monitoring API</li>
-            </ul>
-        </div>
-        <div>
-            <ul>
-                <li>Cloud Logging API</li>
-                <li>Serverless VPC Access API</li>
-                <li>Eventarc API</li>
-            </ul>
-        </div>
-        <div>
-            <ul>
-                <li>Cloud Deployment Manager V2 API</li>
-                <li>Cloud DNS API</li>
-                <li>Cloud Functions API</li>
-            </ul>
-        </div>
-        <div>
-            <ul>
-                <li>Artifact Registry API</li>
-                <li>Cloud Pub/Sub API</li>
-                <li>Cloud Build API</li>
-            </ul>
-        </div>
-        <div>
-            <ul>
-                <li>Service Usage API</li>
-                <li>Secret Manager API</li>
-                <li>Certificate Manager API</li>
-            </ul>
-        </div>
-        <div>
-            <ul>
-                <li>Cloud Key Management Service (KMS) API</li>
-            </ul>
-        </div>
-    </div>
+    <ul>
+        <li>Compute Engine API</li>
+        <li>Cloud SQL Admin API</li>
+        <li>Service Networking API</li>
+        <li>Cloud Source Repositories API</li>
+        <li>Identity and Access Management (IAM) API</li>
+        <li>Cloud Monitoring API</li>
+        <li>Cloud Logging API</li>
+        <li>Serverless VPC Access API</li>
+        <li>Eventarc API</li>
+        <li>Cloud Deployment Manager V2 API</li>
+        <li>Cloud DNS API</li>
+        <li>Cloud Functions API</li>
+        <li>Artifact Registry API</li>
+        <li>Cloud Pub/Sub API</li>
+        <li>Cloud Build API</li>
+        <li>Service Usage API</li>
+        <li>Secret Manager API</li>
+        <li>Certificate Manager API</li>
+        <li>Cloud Key Management Service (KMS) API</li>
+    </ul>
     <li>After enabling the APIs it may take about 10-15 mins to be activated</li>
 </ol>
 
