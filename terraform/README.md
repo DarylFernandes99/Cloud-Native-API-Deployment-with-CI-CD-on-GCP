@@ -9,20 +9,15 @@ This project utilizes Terraform for the dynamic construction of infrastructure o
     }
     @media (min-width: 600px) {
         .grid-container {
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
         }
     }
     @media (min-width: 800px) {
         .grid-container {
-            grid-template-columns: repeat(3, 1fr);
-        }
-    }
-    @media (min-width: 1024px) {
-        .grid-container {
             grid-template-columns: repeat(4, 1fr);
         }
     }
-    @media (min-width: 1280px) {
+    @media (min-width: 1024px) {
         .grid-container {
             grid-template-columns: repeat(5, 1fr);
         }
