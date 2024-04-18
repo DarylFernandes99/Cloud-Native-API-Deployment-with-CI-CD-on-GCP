@@ -10,6 +10,9 @@ class Users(db.Model):
     last_name = db.Column(db.String(60), nullable=False)
     password = db.Column(db.String(80), nullable=False)
     username = db.Column(db.String(70), nullable=False, unique=True)
+    is_verified = db.Column(db.Boolean, unique=False, default=False)
+    verification_token = db.Column(db.String(36), nullable=True)
+    mail_sent_time = db.Column(db.DateTime, nullable=True)
     account_created = db.Column(db.DateTime, default=db.func.now())
     account_updated = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
     

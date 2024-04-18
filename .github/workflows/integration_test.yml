@@ -16,6 +16,8 @@ jobs:
       DB_DATABASE: webapp
       DB_USER: ${{ secrets.DB_USER }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      GCP_CREDENTIALS_JSON: ${{ secrets.GCP_CREDENTIALS_JSON }}
+
     steps:
       - name: Checkout Repository
         id: checkout_repository
@@ -25,7 +27,13 @@ jobs:
         id: create_env_file
         run: |
           echo "$DOTENV_FILE" > .env
-
+      
+      - name: 'Authenticate to Google Cloud'
+        id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ env.GCP_CREDENTIALS_JSON }}'
+      
       - name: Set up MySQL
         id: setup_mysql
         run: |
@@ -35,7 +43,7 @@ jobs:
         id: setup_python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.7
+          python-version: 3.8
 
       - name: Create flask database migrations and run tests
         id: create_flask_db_migrations_and_run_tests

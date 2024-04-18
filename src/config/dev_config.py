@@ -1,4 +1,5 @@
 import os
+import logging
 from dotenv import load_dotenv
 
 # loading environment variables
@@ -10,3 +11,4 @@ class DevConfig:
         self.DEBUG = True
         self.PORT = os.environ.get('DEV_PORT')
         self.HOST = os.environ.get('DEV_HOST')
+        self.LOG_LEVEL = logging.DEBUG

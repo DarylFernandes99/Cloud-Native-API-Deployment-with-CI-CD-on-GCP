@@ -13,6 +13,7 @@ jobs:
 
     env:
       PACKER_CONFIG: ${{ secrets.PACKER_CONFIG }}
+      GCP_CREDENTIALS_JSON: ${{ secrets.GCP_CREDENTIALS_JSON }}
 
     steps:
       - name: Checkout Repository
@@ -27,7 +28,7 @@ jobs:
       - name: Create zip file
         run: |
           sudo apt install zip
-          zip -r ./packer/files/webapp-main.zip . -x '*packer*' -x '*terraform*' -x '*.git*'
+          zip -r webapp-main.zip . -x '*.git*' -x '*packer*' -x '*terraform*' -x '*gcloud_cli*' -x '*serverless*'
 
       - name: Initialize Packer
         id: initialize_packer

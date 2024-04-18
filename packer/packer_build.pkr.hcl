@@ -1,5 +1,9 @@
 build {
   sources = ["sources.googlecompute.webapp-base"]
+  post-processor "manifest" {
+    output     = "packer_output.json"
+    strip_path = true
+  }
 
   provisioner "shell" {
     script = "./scripts/update_centos.sh"
@@ -20,6 +24,11 @@ build {
     destination = "/tmp/csye6225.service"
   }
 
+  provisioner "file" {
+    source      = "./files/cloud_ops_agent_config.yaml"
+    destination = "/tmp/cloud_ops_agent_config.yaml"
+  }
+
   provisioner "shell" {
     script = "./scripts/setup_user.sh"
   }
@@ -31,6 +40,14 @@ build {
   provisioner "shell" {
     script = "./scripts/install_python3.sh"
   }
+
+  provisioner "shell" {
+    script = "./scripts/install_ops_agent.sh"
+  }
+
+  // provisioner "shell" {
+  //   script = "./scripts/glcoud_install.sh"
+  // }
 
   // provisioner "shell" {
   //   inline = [
@@ -52,6 +69,10 @@ build {
   provisioner "shell" {
     script          = "./scripts/setup_webapp.sh"
     execute_command = "sudo  {{.Path}}"
+  }
+
+  provisioner "shell" {
+    script = "./scripts/setup_logs.sh"
   }
 
   provisioner "shell" {

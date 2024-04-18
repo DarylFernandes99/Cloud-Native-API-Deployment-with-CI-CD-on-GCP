@@ -1,3 +1,8 @@
+# Cloud-Native API Deployment with CI/CD on Google Cloud Platform (GCP)
+This repository encompasses a web application backend utilizing Python 3.8 and MySQL, performing a series of tasks: health check **(GET - /healthz)**, user creation **(POST - /v1/user)** with a subsequent verification email sent to the user, retrieval of user details **(GET - /v1/user/self)**, and user details update **(PUT - /v1/user/self)**. Upon user creation, a message is dispatched to GCP Pub/Sub, triggering a serverless function responsible for emailing the user with a unique verification link. Terraform is utilized to configure all necessary resources for the app setup.
+
+Several GitHub workflows are established for Continuous Integration and Continuous Deployment. These workflows activate upon pull request creation, executing functional tests on the webapp backend to detect failures and examining the packer code formatting. Post successful workflow execution and code merging, packer is employed to generate a golden image of the application, configuring all essential libraries/dependencies. Subsequently, the existing instances in the GCP project are replaced with the updated packer image.
+
 # Install Google Cloud CLI
 Follow this URL to find the installer steps for your machine https://cloud.google.com/sdk/docs/install  
 
@@ -28,13 +33,81 @@ $ gcloud auth application-default revoke
     <li>Navigate to google cloud dashboard: <a href="https://console.cloud.google.com/welcome/new">https://console.cloud.google.com/welcome/new</a></li>
     <li>From the Navigation Menu > APIs and services > Library</li>
     <li>Enable the following APIs:</li>
-        <ul>
-            <li>Compute Engine API</li>
-            <li>Cloud SQL Admin API</li>
-            <li>Service Networking API</li>
-            <li>Cloud Source Repositories API</li>
-            <li>Identity and Access Management (IAM) API</li>
-        </ul>
+        <style>
+            .grid-container {
+                display: grid;
+                /* gap: 10px; */
+            }
+            @media (min-width: 600px) {
+                .grid-container {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+            @media (min-width: 800px) {
+                .grid-container {
+                    grid-template-columns: repeat(3, 1fr);
+                }
+            }
+            @media (min-width: 1024px) {
+                .grid-container {
+                    grid-template-columns: repeat(4, 1fr);
+                }
+            }
+            @media (min-width: 1280px) {
+                .grid-container {
+                    grid-template-columns: repeat(5, 1fr);
+                }
+            }
+        </style>
+        <div class="grid-container">
+            <div>
+                <ul>
+                    <li>Compute Engine API</li>
+                    <li>Cloud SQL Admin API</li>
+                    <li>Service Networking API</li>
+                </ul>
+            </div>
+            <div>
+                <ul>
+                    <li>Cloud Source Repositories API</li>
+                    <li>Identity and Access Management (IAM) API</li>
+                    <li>Cloud Monitoring API</li>
+                </ul>
+            </div>
+            <div>
+                <ul>
+                    <li>Cloud Logging API</li>
+                    <li>Serverless VPC Access API</li>
+                    <li>Eventarc API</li>
+                </ul>
+            </div>
+            <div>
+                <ul>
+                    <li>Cloud Deployment Manager V2 API</li>
+                    <li>Cloud DNS API</li>
+                    <li>Cloud Functions API</li>
+                </ul>
+            </div>
+            <div>
+                <ul>
+                    <li>Artifact Registry API</li>
+                    <li>Cloud Pub/Sub API</li>
+                    <li>Cloud Build API</li>
+                </ul>
+            </div>
+            <div>
+                <ul>
+                    <li>Service Usage API</li>
+                    <li>Secret Manager API</li>
+                    <li>Certificate Manager API</li>
+                </ul>
+            </div>
+            <div>
+                <ul>
+                    <li>Cloud Key Management Service (KMS) API</li>
+                </ul>
+            </div>
+        </div>
     <li>After enabling the APIs it may take about 10-15 mins to be activated</li>
 </ol>
 
@@ -43,12 +116,17 @@ $ gcloud auth application-default revoke
     <li>Navigate to google cloud dashboard: <a href="https://console.cloud.google.com/welcome/new">https://console.cloud.google.com/welcome/new</a></li>
     <li>From the Navigation Menu > IAM and admin > Service accounts</li>
     <li>Create a new / modify the permissions of existing service account with the following permissions</li>
-    
-    Service Account User
-    IAP-secured Tunnel User
-    Compute Instance Admin v1
-    Service Account Token Creator
+
     Cloud SQL Editor
+    Compute Instance Admin (v1)
+    Compute Network Admin
+    Compute Security Admin
+    IAP-secured Tunnel User
+    OSPolicyAssignment Editor
+    Pub/Sub Publisher
+    Secret Manager Secret Accessor
+    Service Account Token Creator
+    Service Account User
     Storage Object Viewer
 </ol>
 
@@ -112,26 +190,25 @@ $ packer build -var-file="*.pkrvars.hcl" <file_name or .>
 ```
 
 # Starting the application
-An Application Programming Interface (API) is developed using Python 3, Flask, and MySQL.
 
-## Create and start python3 environment using the following command
+## Create and activate python3 environment using the following command
 
 ```
 # Create environment
-python -m venv <env_name>
+$ python -m venv <env_name>
 
 # Activating environment
 ## For mac and linux os users
-source <env_name>/bin/activate
+$ source <env_name>/bin/activate
 
 ## For windows users
-<env_name>/Scripts/activate
+$ <env_name>/Scripts/activate
 ```
 
 ## Install required packages from the requirements file
 
 ```
-pip install -r requirements.txt
+$ pip install -r requirements.txt
 ```
 
 ## Create .env file in with the following key value pairs</h3>
@@ -146,21 +223,23 @@ DEV_PORT = 8080
 PROD_HOST = "0.0.0.0"
 PROD_PORT = 8080
 PYTHON_ENV = "development"
+GOOGLE_PROJECT_ID = "<gcp_project_id>"
+GOOGLE_TOPIC_NAME = "<pub/sub_topic_name>"
 ```
 
 ## Run the create_databse.py to create the database if it does not exists</h3>
 
 ```
-python create_database.py
+$ python create_database.py
 ```
 
 
 ## Run the following scripts to create table schema in the database</h3>
 
 ```
-flask db init
-flask db migrate
-flask db upgrade
+$ flask db init
+$ flask db migrate
+$ flask db upgrade
 ```
 
 
@@ -168,14 +247,14 @@ flask db upgrade
 
 ```
 # Run the following command to run the tests
-python -m pytest
+$ python -m pytest
 ```
 
 ## To run the app</h3>
 
 ```
 # Run the following command to start the server
-python ./app.py
+$ python ./app.py
 ```
 
 # To run GitHub Workflows

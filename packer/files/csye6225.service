@@ -2,6 +2,7 @@
 Description=CSYE 6225 App
 ConditionPathExists=/home/webapp-main/.env
 After=network.target
+StartLimitIntervalSec=0
 
 [Service]
 Type=simple

@@ -1,4 +1,5 @@
 import os
+import logging
 from dotenv import load_dotenv
 
 # loading environment variables
@@ -10,3 +11,4 @@ class ProductionConfig:
         self.DEBUG = False
         self.PORT = os.environ.get('PROD_PORT')
         self.HOST = os.environ.get('PROD_HOST')
+        self.LOG_LEVEL = logging.INFO

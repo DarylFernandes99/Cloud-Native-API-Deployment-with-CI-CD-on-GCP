@@ -18,6 +18,7 @@ resource "google_compute_firewall" "firewall" {
 	name    = each.value.name
     network = each.value.network
     source_tags = each.value.source_tags
+    target_tags = each.value.source_tags
     source_ranges = each.value.source_ranges
 	depends_on = [
 		google_compute_network.vpc_network

@@ -29,6 +29,7 @@ def add_header(response: Response) -> Response:
 # removing body data from 405 method response
 @api.app_errorhandler(405)
 def special_exception_handler(error: Response) -> Response:
+    logger.warning("Method not allowed")
     return Response(status=405)
 
 @api.route('/healthz', methods = ["GET"])

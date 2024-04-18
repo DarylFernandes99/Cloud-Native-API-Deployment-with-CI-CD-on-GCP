@@ -1,15 +1,15 @@
-# resource "google_compute_subnetwork" "webapp_vpc_network_subnet" {
-#   name                            = "${var.name}"
-#   ip_cidr_range = var.subnet_cidr_range
-#   region        = var.region
-#   network       = google_compute_network.webapp_vpc_network.id
-# }
-
-# resource "google_compute_subnetwork" "db_vpc_network_subnet" {
-#   name                            = "db"
-#   ip_cidr_range = var.subnet_cidr_range
-#   region        = var.region
-#   network       = google_compute_network.webapp_vpc_network.id
+# To test output value => terraform console => module.gcp.test
+# output "test" {
+#   value = {
+#     for subnet in flatten([
+#       for vpc_name, vpc_config in var.vpc_config : [
+#         for subnet_name, subnet_config in vpc_config.subnets: {
+#           subnet_name = subnet_name
+#           subnet_config = subnet_config
+#         }
+#       ]
+#     ]) : subnet.subnet_name => subnet.subnet_config
+#   }
 # }
 
 resource "google_compute_subnetwork" "subnets" {
@@ -19,6 +19,8 @@ resource "google_compute_subnetwork" "subnets" {
         for subnet_name, subnet_config in vpc_config.subnets : {
           "name"         : subnet_config.name
           "ip_cidr_range": subnet_config.ip_cidr_range
+          "purpose": subnet_config.purpose
+          "role": subnet_config.role
           "network"      : google_compute_network.vpc_network[vpc_name].id
         }
       ])
@@ -28,6 +30,8 @@ resource "google_compute_subnetwork" "subnets" {
   name          = each.value.name
   ip_cidr_range = each.value.ip_cidr_range
   network       = each.value.network
+  purpose = each.value.purpose
+  role = each.value.role
   depends_on = [
     google_compute_network.vpc_network
   ]

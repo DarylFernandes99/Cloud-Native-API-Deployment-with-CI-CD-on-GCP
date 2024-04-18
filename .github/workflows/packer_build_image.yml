@@ -13,6 +13,7 @@ jobs:
 
     env:
       DOTENV_FILE: ${{ secrets.PACKER_ENV_FILE }}
+      GCP_CREDENTIALS_JSON: ${{ secrets.GCP_CREDENTIALS_JSON }}
     
     steps:
       - name: Checkout Repository
@@ -24,10 +25,15 @@ jobs:
       #   run: |
       #     echo "$DOTENV_FILE" > .env
       
+      - name: Create Google Credential file
+        id: create_credential_key_file
+        run: |
+          echo "$GCP_CREDENTIALS_JSON" > gcloud_config.json
+      
       - name: Create zip file
         run: |
           sudo apt install zip
-          zip -r webapp-main.zip . -x '*packer*' -x '*terraform*' -x '*.git*'
+          zip -r webapp-main.zip . -x '*.git*' -x '*packer*' -x '*terraform*' -x '*gcloud_cli*' -x '*serverless*'
         
       - uses: actions/upload-artifact@v4
         with:
@@ -38,6 +44,9 @@ jobs:
     needs: build_artifact
     name: Build Packer image
     runs-on: ubuntu-latest
+
+    outputs:
+      packer_image_name: ${{ steps.fetch_packer_image_name.outputs.PACKER_IMAGE_NAME }}
 
     env:
       PACKER_CONFIG: ${{ secrets.PACKER_CONFIG }}
@@ -93,3 +102,52 @@ jobs:
         run: |
           cd packer/
           packer build .
+
+      - name: Fetch Packer Image Name
+        id: fetch_packer_image_name
+        run: |
+          cd packer/
+          sudo apt install jq
+          echo "PACKER_IMAGE_NAME=$(jq -r '.builds[0].artifact_id' ./packer_output.json)" >> "$GITHUB_OUTPUT"
+  
+  continous_deployment:
+    needs: packer-build
+    name: Contionous Deployment
+    runs-on: ubuntu-latest
+
+    env:
+      PACKER_IMAGE_NAME: ${{ needs.packer-build.outputs.packer_image_name }}
+      GCP_CREDENTIALS_JSON: ${{ secrets.GCP_CREDENTIALS_JSON }}
+
+    steps:
+      - name: Checkout Repository
+        id: checkout_repository
+        uses: actions/checkout@v3
+      
+      - name: 'Authenticate to Google Cloud'
+        id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ env.GCP_CREDENTIALS_JSON }}'
+      
+      - name: Create CD config file
+        id: create_config_cd_file
+        run: |
+          gcloud secrets versions access 1 --secret="webapp-cd-config" > ./gcloud_cli/data.txt
+          gcloud secrets versions access 1 --secret="webapp-kms-key" > ./gcloud_cli/webapp_kms.txt
+          gcloud secrets versions access 1 --secret="webapp-startup-script" > ./gcloud_cli/startup_script.txt
+      
+      - name: Convert CRLF to LF
+        id: format_eol_sequence_file
+        run: |
+          cd ./gcloud_cli
+          sed -i -e 's/\r$//' data.txt
+          sed -i -e 's/\r$//' webapp_kms.txt
+          sed -i -e 's/\r$//' startup_script.txt
+      
+      - name: Run CD script
+        id: run_cd_script
+        run: |
+          cd ./gcloud_cli
+          chmod 755 create_instance_template.sh
+          ./create_instance_template.sh $(cat data.txt) $(cat webapp_kms.txt) $PACKER_IMAGE_NAME "$(cat startup_script.txt)"

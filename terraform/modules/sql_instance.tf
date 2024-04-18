@@ -1,3 +1,34 @@
+resource "google_project_service_identity" "cloudsql_sa" {
+    provider = google-beta
+
+    project = var.project_id
+    service = "sqladmin.googleapis.com"
+}
+
+resource "google_kms_crypto_key_iam_binding" "crypto_key" {
+    for_each = {
+        for idx, config in flatten([
+            for vpc_name, vpc_config in var.vpc_config: flatten([
+                for sql_instance_name, sql_instance_config in vpc_config.sql_instance : {
+                    cmek_account: sql_instance_config.cmek_account
+                }
+            ])
+        ]) : idx => config
+    }
+
+    provider      = google-beta
+    crypto_key_id = google_kms_crypto_key.key[each.value.cmek_account].id
+    role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+
+    members = [
+        "serviceAccount:${google_project_service_identity.cloudsql_sa.email}",
+    ]
+
+    depends_on = [
+        google_project_service_identity.cloudsql_sa
+    ]
+}
+
 resource "google_sql_database_instance" "sql_instance" {
     for_each = {
         for idx, config in flatten([
@@ -9,6 +40,7 @@ resource "google_sql_database_instance" "sql_instance" {
                     deletion_protection: sql_instance_config.deletion_protection
                     vpc_name: vpc_name
                     settings: sql_instance_config.settings
+                    cmek_account: sql_instance_config.cmek_account
                 }
             ])
         ]) : idx => config
@@ -17,8 +49,11 @@ resource "google_sql_database_instance" "sql_instance" {
     name             = each.value.name
     database_version = each.value.database_version
     deletion_protection = each.value.deletion_protection
+    encryption_key_name = google_kms_crypto_key.key[each.value.cmek_account].id
 
     depends_on = [
+        google_kms_crypto_key.key,
+        google_kms_crypto_key_iam_binding.crypto_key,
         google_service_networking_connection.private_access_connection
     ]
 

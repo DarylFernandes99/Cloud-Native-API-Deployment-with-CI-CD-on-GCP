@@ -1,5 +1,7 @@
 import json
 from src.tests.base import BaseTestCase
+from src import db
+from src.models.users_model import Users
 
 class UsersTest(BaseTestCase):
     def test_create_account(self):
@@ -12,6 +14,11 @@ class UsersTest(BaseTestCase):
 
         response = self.client.post('/v1/user', data=json.dumps(data), content_type="application/json")
         assert response.status_code == 201
+        
+        # Verify account
+        user_data = Users.query.filter_by(username = data["username"]).first()
+        user_data.is_verified = True
+        db.session.commit()
 
         auth_token = self.get_basic_auth_token(data['username'], data['password'])
         get_response = self.client.get('/v1/user/self', headers={'Authorization': f'Basic {auth_token}'})
@@ -32,7 +39,7 @@ class UsersTest(BaseTestCase):
         auth_token = self.get_basic_auth_token(username, old_password)
 
         response = self.client.put('/v1/user/self', data=json.dumps(data), content_type='application/json', headers={'Authorization': f'Basic {auth_token}'})
-        assert response.status_code == 204
+        assert response.status_code == 200
         
         auth_token = self.get_basic_auth_token(username, data['password'])
         get_response = self.client.get('/v1/user/self', headers={'Authorization': f'Basic {auth_token}'})

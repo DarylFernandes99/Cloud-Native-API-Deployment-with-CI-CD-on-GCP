@@ -1,5 +1,90 @@
 # Infrastructure Deployment with Terraform on Google Cloud Platform
-This project utilizes Terraform for the dynamic construction of infrastructure on the Google Cloud Platform (GCP). Key components include the creation of a Virtual Private Cloud (VPC), subnets, routes, firewalls, Virtual Machine (VM) instances, Private Services Access for VPC, and a Cloud SQL instance. Configuration details are conveniently provided through a variable file, ensuring flexibility and ease of customization.
+This project utilizes Terraform for the dynamic construction of infrastructure on the Google Cloud Platform (GCP). Configuration details are conveniently provided through a variable file, ensuring flexibility and ease of customization.
+
+## Resources used
+<style>
+    .grid-container {
+        display: grid;
+        /* gap: 10px; */
+    }
+    @media (min-width: 600px) {
+        .grid-container {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    @media (min-width: 800px) {
+        .grid-container {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+    @media (min-width: 1024px) {
+        .grid-container {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+    @media (min-width: 1280px) {
+        .grid-container {
+            grid-template-columns: repeat(5, 1fr);
+        }
+    }
+</style>
+<div class="grid-container">
+    <div>
+        <ul>
+            <li>VPC [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network">Link</a>]</li>
+            <li>Global Address [<a href="https://registry.terraform.io/providers/hashicorp/docs/resources/compute_global_address">Link</a>]</li>
+            <li>SQL Database [<a href="https://registry.terraform.io/providers/latest/docs/resources/sql_database">Link</a>]</li>
+            <li>KMS Crypto Key [<a href="https://registry.terraform.io/providers/latest/docs/resources/kms_crypto_key">Link</a>]</li>
+            <li>Google Secret Manager Version [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/secret_manager_secret_version">Link</a>]</li>
+            <li>Storage Bucket [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket">Link</a>]</li>
+            <li>Cloud Function V2 [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/cloudfunctions2_function">Link</a>]</li>
+            <li>Global Forwarding Rule [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_global_forwarding_rule">Link</a>]</li>
+            <li>Backend Service [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_backend_service">Link</a>]</li>
+            <li>Random Password [<a href="https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password">Link</a>]</li>
+        </ul>
+    </div>
+    <div>
+        <ul>
+            <li>Subnet [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_subnetwork">Link</a>]</li>
+            <li>Peering Connection [<a href="https://registry.terraform.io/providers/latest/docs/resources/service_networking_connection">Link</a>]</li>
+            <li>SQL User [<a href="https://registry.terraform.io/providers/latest/docs/resources/sql_user">Link</a>]</li>
+            <li>Service Account [<a href="https://registry.terraform.io/providers/latest/docs/resources/sql_user">Link</a>]</li>
+            <li>VM Instance [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance">Link</a>]</li>
+            <li>Storage Bucket Object [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket_object">Link</a>]</li>
+            <li>SSL Certificate [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_managed_ssl_certificate">Link</a>]</li>
+            <li>Regional Instance Template [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_region_instance_template">Link</a>]</li>
+            <li>Regional Autoscaler [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_region_autoscaler">Link</a>]</li>
+            <li>Network Peering Routes Config [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network_peering_routes_config">Link</a>]</li>
+        </ul>
+    </div>
+    <div>
+        <ul>
+            <li>Routes [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_route">Link</a>]</li>
+            <li>Serverless VPC Access connector [<a href="https://registry.terraform.io/providers/latest/docs/resources/vpc_access_connector">Link</a>]</li>
+            <li>KMS Key Ring [<a href="https://registry.terraform.io/providers/latest/docs/resources/kms_key_ring">Link</a>]</li>
+            <li>IAM Policy [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/google_project_iam">Link</a>]</li>
+            <li>DNS Managed Zone [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/dns_managed_zone">Link</a>]</li>
+            <li>Pub/Sub Topic [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/pubsub_topic">Link</a>]</li>
+            <li>URL Map [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_url_map">Link</a>]</li>
+            <li>Health Check [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_health_check">Link</a>]</li>
+            <li>Template File [<a href="https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file">Link</a>]</li>
+            <li>Firewall [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall">Link</a>]</li>
+        </ul>
+    </div>
+    <div>
+        <ul>
+            <li>SQL Database Instance [<a href="https://registry.terraform.io/providers/latest/docs/resources/sql_database_instance">Link</a>]</li>
+            <li>KMS Crypto Key [<a href="https://registry.terraform.io/providers/latest/docs/resources/kms_crypto_key">Link</a>]</li>
+            <li>Google Secret Manager [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/secret_manager_secret">Link</a>]</li>
+            <li>DNS Records Set [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/dns_record_set">Link</a>]</li>
+            <li>Pub/Sub Topic Schema [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/pubsub_schema">Link</a>]</li>
+            <li>Target HTTPS Proxy [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_target_https_proxy">Link</a>]</li>
+            <li>Region Instance Group Manager [<a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_region_instance_group_manager">Link</a>]</li>
+            <li>Random ID [<a href="https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id">Link</a>]</li>
+        </ul>
+    </div>
+</div>
+
 
 # Install Google Cloud CLI
 Follow this URL to find the installer steps for your machine https://cloud.google.com/sdk/docs/install
@@ -31,13 +116,55 @@ $ gcloud auth application-default revoke
     <li>Navigate to google cloud dashboard: <a href="https://console.cloud.google.com/welcome/new">https://console.cloud.google.com/welcome/new</a></li>
     <li>From the Navigation Menu > APIs and services > Library</li>
     <li>Enable the following APIs:</li>
-        <ul>
-            <li>Compute Engine API</li>
-            <li>Cloud SQL Admin API</li>
-            <li>Service Networking API</li>
-            <li>Cloud Source Repositories API</li>
-            <li>Identity and Access Management (IAM) API</li>
-        </ul>
+    <div class="grid-container">
+        <div>
+            <ul>
+                <li>Compute Engine API</li>
+                <li>Cloud SQL Admin API</li>
+                <li>Service Networking API</li>
+            </ul>
+        </div>
+        <div>
+            <ul>
+                <li>Cloud Source Repositories API</li>
+                <li>Identity and Access Management (IAM) API</li>
+                <li>Cloud Monitoring API</li>
+            </ul>
+        </div>
+        <div>
+            <ul>
+                <li>Cloud Logging API</li>
+                <li>Serverless VPC Access API</li>
+                <li>Eventarc API</li>
+            </ul>
+        </div>
+        <div>
+            <ul>
+                <li>Cloud Deployment Manager V2 API</li>
+                <li>Cloud DNS API</li>
+                <li>Cloud Functions API</li>
+            </ul>
+        </div>
+        <div>
+            <ul>
+                <li>Artifact Registry API</li>
+                <li>Cloud Pub/Sub API</li>
+                <li>Cloud Build API</li>
+            </ul>
+        </div>
+        <div>
+            <ul>
+                <li>Service Usage API</li>
+                <li>Secret Manager API</li>
+                <li>Certificate Manager API</li>
+            </ul>
+        </div>
+        <div>
+            <ul>
+                <li>Cloud Key Management Service (KMS) API</li>
+            </ul>
+        </div>
+    </div>
     <li>After enabling the APIs it may take about 10-15 mins to be activated</li>
 </ol>
 
@@ -47,11 +174,16 @@ $ gcloud auth application-default revoke
     <li>From the Navigation Menu > IAM and admin > Service accounts</li>
     <li>Create a new / modify the permissions of existing service account with the following permissions</li>
     
-    Service Account User
-    IAP-secured Tunnel User
-    Compute Instance Admin v1
-    Service Account Token Creator
     Cloud SQL Editor
+    Compute Instance Admin (v1)
+    Compute Network Admin
+    Compute Security Admin
+    IAP-secured Tunnel User
+    OSPolicyAssignment Editor
+    Pub/Sub Publisher
+    Secret Manager Secret Accessor
+    Service Account Token Creator
+    Service Account User
     Storage Object Viewer
 </ol>
 
@@ -62,229 +194,12 @@ Follow this URL to find the installer steps for your machine https://developer.h
 
 <ol>
     <li>Create a file named *.tfvars</li>
-    <li>Add the data in the format shown below (expected variables are mentioned in the variables.tf file):</li>
-    
-    name       = "<project_name>"
-    project_id = "<project_id>"
-    region     = "<project_region>"
-    zone       = "<project_zone>"
-
-    # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network
-    vpc_config = (optional) {
-        <vpc_name> = {
-            name                            = "<vpc_name>"
-            auto_create_subnetworks         = true or false
-            routing_mode                    = "REGIONAL" or "GLOBAL"
-            delete_default_routes_on_create = true or false
-            mtu                             = (number) 1460
-
-            # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_subnetwork
-            subnets = {
-                <subnet1_name> = {
-                    name          = "<subnet1_name>"
-                    ip_cidr_range = "ip_range"
-                },
-                <subnet2_name> = {
-                    name          = "<subnet2_name>"
-                    ip_cidr_range = "ip_range"
-                },
-            }
-
-            # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_route
-            routes = {
-                <route1_name> = {
-                    name       = "<route1_name>"
-                    dest_range = "dest_range"
-                    tags       = (optional) [ <subnet_name to which this route is applicable > ]
-                },
-                <route2_name> = {
-                    name       = "<route2_name>"
-                    dest_range = "dest_range"
-                    tags       = (optional) [ <subnet_name to which this route is applicable > ]
-                }
-            }
-            
-            # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall
-            firewalls = {
-                <firewall1_name> = {
-                    name          = "<firewall1_name>"
-                    source_tags   = [ "<tag>", "<tag>" ]
-                    source_ranges = (optional) [ "<range>", "<range>" ]
-                    allow         = (optional) [
-                        {
-                            protocol = "<protocol_name>"
-                            ports    = [ "<port>", "<port>" ]
-                        }
-                    ]
-                    deny          = (optional) [
-                        {
-                            protocol = "<protocol_name>"
-                            ports    = [ "<port>", "<port>" ]
-                        }
-                    ]
-                },
-                <firewall2_name> = {
-                    name          = "<firewall2_name>"
-                    source_tags   = [ "<tag>", "<tag>" ]
-                    source_ranges = (optional) [ "<range>", "<range>" ]
-                    allow         = (optional) [
-                        {
-                            protocol = "<protocol_name>"
-                            ports    = (optional) [ "<port>", "<port>" ]
-                        }
-                    ]
-                    deny          = (optional) [
-                        {
-                            protocol = "<protocol_name>"
-                            ports    = (optional) [ "<port>", "<port>" ]
-                        }
-                    ]
-                }
-            }
-            
-            # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_global_address
-            private_access = (optional) {
-                <private_access1_name> = {
-                    name          = "<private_access1_name>"
-                    purpose       = "<purpose>"
-                    address_type  = "<addres_type>"
-                    prefix_length = (number) <prefix_length>
-
-                    # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_networking_connection
-                    peering_connection = (optional) {
-                        <peering_connection1> = {
-                            service         = "<service>"
-                            deletion_policy = "<deletion_policy>"
-                        }
-                    }
-                },
-                <private_access2_name> = {
-                    name          = "<private_access2_name>"
-                    purpose       = "<purpose>"
-                    address_type  = "<addres_type>"
-                    prefix_length = (number) <prefix_length>
-
-                    # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_networking_connection
-                    peering_connection = (optional) {
-                        <peering_connection1> = {
-                            service         = "<service>"
-                            deletion_policy = "<deletion_policy>"
-                        }
-                    }
-                }
-            }
-
-            sql_instance = (optional) {
-                # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/sql_database_instance
-                sql_instance1 = {
-                    # Note - Upon deletion of this instance the name, GCP will fail to recreate the instance with the same name for 7 days
-                    name                = "<sql_instance_name>"
-                    database_version    = "<sql_instance_database_version>"
-                    deletion_protection = true or false
-
-                    settings = {
-                        tier              = "<sql_instance_tier>"
-                        disk_type         = (optional) "<sql_instance_disk_type>"
-                        # Size in GBs
-                        disk_size         = (number) 10
-                        availability_type = (optional) "<sql_instance_availability_type>"
-
-                        ip_configuration = {
-                            ipv4_enabled                                  = true or false
-                            enable_private_path_for_google_cloud_services = (optional) true or false
-                        }
-
-                        # In case of MySQL databse version both should be true
-                        backup_configuration = {
-                            enabled            = true or false
-                            binary_log_enabled = true or false
-                        }
-                    }
-
-                    # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/sql_database
-                    sql_database = {
-                        name = "<sql_database_name>"
-                    }
-
-                    # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/sql_user
-                    sql_user = {
-                        name               = "<sql_user_name>"
-                        host_instance_name = "<compute_vm_name>"
-                    }
-                }
-            }
-        }
-    }
-
-    # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance
-    instance_properties = (optional) {
-        instance1 = {
-            can_ip_forward      = true or false, default is false
-            deletion_protection = true or false, default is false
-            enable_display      = true or false, default is false
-            machine_type        = "<machine_type>"
-            name                = "<machine_name>"
-            zone                = "<zone to create in>"
-            tags                = [ "<tag>", "<tag>" ]
-
-            boot_disk           = {
-                boot_disk1 = {
-                    auto_delete = true or false, default is true
-                    device_name = "<device_name>"
-                    mode        = "<disk_mode>", default is "READ_WRITE"
-
-                    initialize_params = {
-                        image = "<custom_image_name>"
-                        size  = (optional) (number) 20
-                        type  = (optional) "<machine_config_type>", default is "pd-balanced"
-                    }
-                }
-            }
-
-            labels = {
-                goog-ec-src = optional(string, "vm_add-tf")
-            }
-
-            network_interface = {
-                network_interface1 = {
-                    access_config = {
-                        network_tier = (optional) "<network_tier>", default is "PREMIUM"
-                    }
-
-                    queue_count = (optional) (number) <queue_count>, default is 0
-                    stack_type  = (optional) "<stack_type>", default is "IPV4_ONLY"
-                    subnetwork  = (optional) "<subnetwork>", default is ""
-                }
-            }
-
-            scheduling = {
-                scheduling1 = {
-                    automatic_restart   = (optional) "<automatic_restart>", default is true
-                    on_host_maintenance = (optional) "<on_host_maintenance>", default is "MIGRATE"
-                    preemptible         = (optional) "<preemptible>", default is false
-                    provisioning_model  = (optional) "<provisioning_model>", default is "STANDARD"
-                }
-            }
-
-            service_account = {
-                service_account1 = {
-                    email  = "<service_account_email>"
-                    scopes = [ "<account_permission>", "<account_permission>" ]
-                }
-            }
-
-            shielded_instance_config = map(object({
-                enable_integrity_monitoring = (optional) true or false
-                enable_secure_boot          = (optional) true or false
-                enable_vtpm                 = (optional) true or false
-            }))
-        }
-    }
+    <li>Add the data in the correct format (expected variables are mentioned in the variables.tf file)</li>
 </ol>
 
 `Note: If the variable file is named terraform.tfvars or terraform.tfvars.json it will automatically be picked up by terraform. The --var-file="*.tfvars" is not required to be passed to create or apply the plan`
 
-## Initialize and validate the terraform files
+## Initialize, format and validate the terraform files
 
  Run the initialize_terraform.sh file
 

@@ -2,6 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 import os
 from src.config.config import Config
+from src.config.log_formatter import LogFormatter
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -18,20 +19,27 @@ app = Flask(__name__, static_url_path='/static', static_folder='../static')
 CORS(app)
 
 # calling the dev configuration
-config = Config().dev_config if os.environ.get("PYTHON_ENV") == "development" else Config().production_config
+config = Config().production_config if os.environ.get("PYTHON_ENV") == "production" else Config().dev_config
 
 # making our application to use env
 app.env = config.ENV
 
+# Configure Google Pub/Sub
+from src.config.pub_sub_config import Pub_Sub
+project_id = os.environ.get("GOOGLE_PROJECT_ID")
+topic_name = os.environ.get("GOOGLE_TOPIC_NAME")
+pub_sub_config = Pub_Sub(project_id, topic_name)
+
 # Configure Flask logging
-app.logger.setLevel(logging.INFO)  # Set log level to INFO
+app.logger.setLevel(config.LOG_LEVEL)  # Set log level to INFO
 logger_path = "./logs"
 if not os.path.exists(logger_path):
     os.makedirs(logger_path)
 handler = logging.FileHandler(logger_path + "/logfile.log")  # Log to a file
 # adding timestamp formatter
-formatter = logging.Formatter('%(asctime)s %(levelname)s in %(module)s: %(message)s')
+formatter = logging.Formatter('{"timestamp":"%(asctime)s", "level":"%(levelname)s", "logger":"%(module)s", "message":"%(message)s"}')
 handler.setFormatter(formatter)
+handler.format = LogFormatter.custom_formatter
 app.logger.addHandler(handler)
 
 # Setting up Bcrypt
