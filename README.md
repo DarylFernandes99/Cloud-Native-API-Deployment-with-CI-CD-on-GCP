@@ -1,196 +1,137 @@
 # Cloud-Native API Deployment with CI/CD on Google Cloud Platform (GCP)
-This repository encompasses a web application backend utilizing Python 3.8 and MySQL, performing a series of tasks: health check **(GET - /healthz)**, user creation **(POST - /v1/user)** with a subsequent verification email sent to the user, retrieval of user details **(GET - /v1/user/self)**, and user details update **(PUT - /v1/user/self)**. Upon user creation, a message is dispatched to GCP Pub/Sub, triggering a serverless function responsible for emailing the user with a unique verification link. Terraform is utilized to configure all necessary resources for the app setup.
 
-Several GitHub workflows are established for Continuous Integration and Continuous Deployment. These workflows activate upon pull request creation, executing functional tests on the webapp backend to detect failures and examining the packer code formatting. Post successful workflow execution and code merging, packer is employed to generate a golden image of the application, configuring all essential libraries/dependencies. Subsequently, the existing instances in the GCP project are replaced with the updated packer image.
+## Project Overview
 
-# Install Google Cloud CLI
-Follow this URL to find the installer steps for your machine https://cloud.google.com/sdk/docs/install  
+This project implements a cloud-native REST API with a CI/CD pipeline on Google Cloud Platform. The application includes user management functionality and leverages multiple GCP services for a scalable, secure, and robust architecture.
 
-`Note: Add the bin directory of gcloud-sdk to PATH variable, else you would have to run the commands with "<path-to-bin of gcloud sdk>/" prefix`
+### Key Features:
 
-## Setup Google Cloud CLI
+- **RESTful API Endpoints**:
+  - Health Check (`GET /healthz`)
+  - User Creation (`POST /v1/user`) with email verification
+  - User Details Retrieval (`GET /v1/user/self`)
+  - User Details Update (`PUT /v1/user/self`)
 
-```
-$ gcloud auth login
-$ gcloud auth application-default login
-```
+- **Cloud-Native Architecture**:
+  - Python 3.8 Flask backend
+  - MySQL database
+  - Infrastructure as Code (IaC) with Terraform
+  - Machine Images with Packer
+  - Event-driven architecture with Pub/Sub
 
-## Setup default project
+- **CI/CD Pipeline**:
+  - GitHub Actions workflows
+  - Automated testing
+  - Infrastructure validation
+  - Immutable infrastructure deployment
 
-```
-$ gcloud config set project <project_id>
-```
+## Architecture
 
-## To revoke access to Google Cloud CLI
+The application utilizes several Google Cloud Platform services:
 
-```
-$ gcloud auth revoke
-$ gcloud auth application-default revoke
-```
+![GCP Infrastructure Architecture](architecture.png)
 
-## Enable APIs in Google Cloud Platform
-<ol>
-    <li>Navigate to google cloud dashboard: <a href="https://console.cloud.google.com/welcome/new">https://console.cloud.google.com/welcome/new</a></li>
-    <li>From the Navigation Menu > APIs and services > Library</li>
-    <li>Enable the following APIs:</li>
-        <!-- <style>
-            .grid-container {
-                display: grid;
-                /* gap: 10px; */
-            }
-            @media (min-width: 600px) {
-                .grid-container {
-                    grid-template-columns: repeat(3, 1fr);
-                }
-            }
-            @media (min-width: 800px) {
-                .grid-container {
-                    grid-template-columns: repeat(4, 1fr);
-                }
-            }
-            @media (min-width: 1024px) {
-                .grid-container {
-                    grid-template-columns: repeat(5, 1fr);
-                }
-            }
-        </style>
-        <div class="grid-container">
-            <div>
-                <ul>
-                    <li>Compute Engine API</li>
-                <ul>
-            </div>
-        </div> -->
-        <ul>
-            <li>Compute Engine API</li>
-            <li>Cloud SQL Admin API</li>
-            <li>Service Networking API</li>
-            <li>Cloud Source Repositories API</li>
-            <li>Identity and Access Management (IAM) API</li>
-            <li>Cloud Monitoring API</li>
-            <li>Cloud Logging API</li>
-            <li>Serverless VPC Access API</li>
-            <li>Eventarc API</li>
-            <li>Cloud Deployment Manager V2 API</li>
-            <li>Cloud DNS API</li>
-            <li>Cloud Functions API</li>
-            <li>Artifact Registry API</li>
-            <li>Cloud Pub/Sub API</li>
-            <li>Cloud Build API</li>
-            <li>Service Usage API</li>
-            <li>Secret Manager API</li>
-            <li>Certificate Manager API</li>
-            <li>Cloud Key Management Service (KMS) API</li>
-        </ul>
-    <li>After enabling the APIs it may take about 10-15 mins to be activated</li>
-</ol>
+- **Compute Engine**: Hosts the web application on autoscaled VM instances
+- **Cloud SQL**: Managed MySQL database
+- **Pub/Sub**: Event handling for user registration
+- **Cloud Functions**: Serverless email delivery
+- **Secret Manager**: Secure credentials storage
+- **VPC Network**: Secure networking
+- **Cloud KMS**: Encryption key management
+- **Cloud DNS**: Domain name management
+- **Cloud Load Balancing**: Traffic management with health checks
 
-## Create Service account and give permissions
-<ol>
-    <li>Navigate to google cloud dashboard: <a href="https://console.cloud.google.com/welcome/new">https://console.cloud.google.com/welcome/new</a></li>
-    <li>From the Navigation Menu > IAM and admin > Service accounts</li>
-    <li>Create a new / modify the permissions of existing service account with the following permissions</li>
+The system follows event-driven architecture where user creation triggers a message to Pub/Sub, which then activates a serverless function to send verification emails via Mailgun.
 
-    Cloud SQL Editor
-    Compute Instance Admin (v1)
-    Compute Network Admin
-    Compute Security Admin
-    IAP-secured Tunnel User
-    OSPolicyAssignment Editor
-    Pub/Sub Publisher
-    Secret Manager Secret Accessor
-    Service Account Token Creator
-    Service Account User
-    Storage Object Viewer
-</ol>
-
-## Add Service Account key to the environment vairable
-### Create JSON key for the service account
-<ol>
-    <li>Navigate to google cloud dashboard: <a href="https://console.cloud.google.com/welcome/new">https://console.cloud.google.com/welcome/new</a></li>
-    <li>From the Navigation Menu > IAM and admin > Service accounts</li>
-    <li>Click on the service account to be used</li>
-    <li>Under "KEYS" tab, click on "ADD KEY" dropdown and select "Create new key"</li>
-</ol>
+## Project Structure
 
 ```
-# After downloading the JSON key file, run the following
-$ export GOOGLE_APPLICATION_CREDENTIALS="<path to key>/<file_name>.json"
+.
+├── .github/workflows/           # GitHub Actions CI/CD workflows
+├── gcloud_cli/                  # GCP CLI scripts
+├── packer/                      # Packer configuration for machine images
+│   ├── files/                   # Configuration files for VM instances
+│   └── scripts/                 # Setup scripts for VM instances
+├── serverless/                  # Cloud Function for email verification
+│   ├── config/                  # Configuration for serverless function
+│   └── models/                  # Data models for serverless function
+├── src/                         # Web application source code
+│   ├── config/                  # Application configuration
+│   ├── controllers/             # Request handlers
+│   ├── middlewares/             # Request/response processing
+│   ├── models/                  # Data models
+│   ├── services/                # Business logic
+│   └── tests/                   # Unit and integration tests
+├── static/                      # Static files (swagger.json)
+├── terraform/                   # Terraform IaC configuration
+│   └── modules/                 # Terraform modules for GCP resources
+├── app.py                       # Application entry point
+├── create_database.py           # Database initialization script
+├── requirements.txt             # Python dependencies
+└── various setup scripts        # Helper scripts for setup and deployment
 ```
 
-# Install packer
-Follow this URL to find the installer steps for your machine https://developer.hashicorp.com/packer/install
+## Getting Started
 
-## Choosing the OS family
-https://cloud.google.com/compute/docs/images/os-details
+### Prerequisites
 
-## Create a input variable file
+- Google Cloud Platform account with billing enabled
+- Enabled GCP APIs (see [Enabling APIs](#enable-apis-in-google-cloud-platform))
+- Git
+- Python 3.8+
+- Google Cloud CLI
+- Terraform
+- Packer
 
-<ol>
-    <li>Create a file named *.pkrvars.hcl</li>
-    <li>Add the data in the format shown below (expected variables are mentioned in the variables.tf file):</li>
-    
-    project_id          = "<project_id>"
-    zone                = "<project_zone>"
-    machine_type        = "<machine_type>"
-    ssh_username        = "<name_of_the_service_account>"
-    use_os_login        = false or true
-    source_image_family = "<os_family>"
-    webapp_version      = <webapp_version>
-    mysql_root_password = <mysql_password to be created for 'root' user>
-</ol>
+### Installation
 
-`Note: If the variable file is named *.auto.pkrvars.hcl it will automatically be picked up by packer. The --var-file="*.pkrvars.hcl" is not required to be passed to validate or build the image`
+#### 1. Install Google Cloud CLI
 
-## Formatting packer code
-Formatting the packer code
+Follow the instructions at [https://cloud.google.com/sdk/docs/install](https://cloud.google.com/sdk/docs/install) to install the Google Cloud CLI for your platform.
 
-```
-$ packer fmt <file_name or .>
-```
+> **Note**: Add the bin directory of gcloud-sdk to PATH variable, else you would have to run the commands with `<path-to-bin of gcloud sdk>/` prefix.
 
-## Validate packer config
-Check and validate the packer config to be created created
+#### 2. Setup Google Cloud CLI
 
-```
-$ packer validate -var-file="*.pkrvars.hcl" <file_name or .>
+```bash
+# Login to your GCP account
+gcloud auth login
+gcloud auth application-default login
+
+# Set your default project
+gcloud config set project <project_id>
 ```
 
-## Building image by packer
-Building the image using packer
+#### 3. Install Packer
 
-```
-$ packer build -var-file="*.pkrvars.hcl" <file_name or .>
-```
+Follow the instructions at [https://developer.hashicorp.com/packer/install](https://developer.hashicorp.com/packer/install) to install Packer for your platform.
 
-# Starting the application
+#### 4. Install Terraform
 
-## Create and activate python3 environment using the following command
+Follow the instructions at [https://developer.hashicorp.com/terraform/install](https://developer.hashicorp.com/terraform/install) to install Terraform for your platform.
 
-```
-# Create environment
-$ python -m venv <env_name>
+#### 5. Setup Python Environment
 
-# Activating environment
-## For mac and linux os users
-$ source <env_name>/bin/activate
+```bash
+# Create virtual environment
+python -m venv <env_name>
 
-## For windows users
-$ <env_name>/Scripts/activate
-```
+# Activate environment
+# For Mac/Linux:
+source <env_name>/bin/activate
+# For Windows:
+<env_name>/Scripts/activate
 
-## Install required packages from the requirements file
-
-```
-$ pip install -r requirements.txt
+# Install dependencies
+pip install -r requirements.txt
 ```
 
-## Create .env file in with the following key value pairs</h3>
+#### 6. Configure Environment Variables
 
-``Note: Update the DEV_HOST, DEV_PORT, PROD_HOST, PROD_PORT based on the requirement``
+Create a `.env` file with the following configuration:
+
 ```
 SQLALCHEMY_DATABASE_URI_DEV = "mysql://<USERNAME>:<PASSWORD>@<HOST>:<PORT>/<DBNAME>"
-# The following flag can toggle on/off the tracking of inserts, updates, and deletes for models
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 DEV_HOST = "0.0.0.0"
 DEV_PORT = 8080
@@ -201,49 +142,188 @@ GOOGLE_PROJECT_ID = "<gcp_project_id>"
 GOOGLE_TOPIC_NAME = "<pub/sub_topic_name>"
 ```
 
-## Run the create_databse.py to create the database if it does not exists</h3>
+## Enable APIs in Google Cloud Platform
+
+1. Navigate to the Google Cloud dashboard: [https://console.cloud.google.com/welcome/new](https://console.cloud.google.com/welcome/new)
+2. From the Navigation Menu > APIs and services > Library
+3. Enable the following APIs:
+   - Compute Engine API
+   - Cloud SQL Admin API
+   - Service Networking API
+   - Cloud Source Repositories API
+   - Identity and Access Management (IAM) API
+   - Cloud Monitoring API
+   - Cloud Logging API
+   - Serverless VPC Access API
+   - Eventarc API
+   - Cloud Deployment Manager V2 API
+   - Cloud DNS API
+   - Cloud Functions API
+   - Artifact Registry API
+   - Cloud Pub/Sub API
+   - Cloud Build API
+   - Service Usage API
+   - Secret Manager API
+   - Certificate Manager API
+   - Cloud Key Management Service (KMS) API
+
+> **Note**: After enabling the APIs, it may take about 10-15 minutes for them to be activated.
+
+## Create Service Account and Grant Permissions
+
+1. Navigate to the Google Cloud dashboard: [https://console.cloud.google.com/welcome/new](https://console.cloud.google.com/welcome/new)
+2. From the Navigation Menu > IAM and admin > Service accounts
+3. Create a new or modify an existing service account with the following permissions:
+   - Cloud SQL Editor
+   - Compute Instance Admin (v1)
+   - Compute Network Admin
+   - Compute Security Admin
+   - IAP-secured Tunnel User
+   - OSPolicyAssignment Editor
+   - Pub/Sub Publisher
+   - Secret Manager Secret Accessor
+   - Service Account Token Creator
+   - Service Account User
+   - Storage Object Viewer
+
+### Add Service Account Key to Environment Variables
+
+1. Navigate to the Google Cloud dashboard
+2. From the Navigation Menu > IAM and admin > Service accounts
+3. Click on the service account to be used
+4. Under "KEYS" tab, click on "ADD KEY" dropdown and select "Create new key"
+5. Download the JSON key file and set environment variable:
+
+```bash
+export GOOGLE_APPLICATION_CREDENTIALS="<path to key>/<file_name>.json"
+```
+
+## Infrastructure Deployment
+
+### Building VM Images with Packer
+
+1. Create a Packer variables file (e.g., `variables.auto.pkrvars.hcl`):
+
+```hcl
+project_id          = "<project_id>"
+zone                = "<project_zone>"
+machine_type        = "<machine_type>"
+ssh_username        = "<name_of_the_service_account>"
+use_os_login        = false or true
+source_image_family = "<os_family>"
+webapp_version      = <webapp_version>
+mysql_root_password = <mysql_password to be created for 'root' user>
+```
+
+2. Validate the Packer configuration:
+
+```bash
+packer validate .
+```
+
+3. Build the image:
+
+```bash
+packer build .
+```
+
+### Deploying Infrastructure with Terraform
+
+1. Create a Terraform variables file (e.g., `terraform.tfvars`):
 
 ```
-$ python create_database.py
+# Add variables specific to your deployment
+# See variables.tf for required variables
 ```
 
+2. Initialize Terraform:
 
-## Run the following scripts to create table schema in the database</h3>
-
-```
-$ flask db init
-$ flask db migrate
-$ flask db upgrade
+```bash
+terraform init
 ```
 
+3. Format and validate Terraform files:
 
-## To run the tests</h3>
-
-```
-# Run the following command to run the tests
-$ python -m pytest
-```
-
-## To run the app</h3>
-
-```
-# Run the following command to start the server
-$ python ./app.py
+```bash
+terraform fmt
+terraform validate
 ```
 
-# To run GitHub Workflows
-### Add the secrets to the Repository secrets</li>
-<ol>
-    <li>Go to repository settings</li>
-    <li>Under "Secrets and variables", select "Actions"</li>
-    <li>Create "New repository secrets" for the following:</li>
-    
-    # To run integration tests workflow
-    DB_PASSWORD: <password of the database> ('root' works in most cases)
-    DB_USER: <user of the database> ('root' works in most cases)
-    ENV_FILE: Add the contents of the webapp .env file with the above user and password for databse URI
-    
-    # To run packer workflows
-    GCP_CREDENTIALS_JSON: Add the contents of the JSON key file created for the service account
-    PACKER_CONFIG: Add the content of the *.pkrvars.hcl or *.auto.pkrvars.hcl file
-</ol>
+4. Create a deployment plan:
+
+```bash
+terraform plan
+```
+
+5. Apply the plan to create infrastructure:
+
+```bash
+terraform apply
+```
+
+## Running the Application Locally
+
+### Initialize Database
+
+```bash
+# Create database if it doesn't exist
+python create_database.py
+
+# Create database schema
+flask db init
+flask db migrate
+flask db upgrade
+```
+
+### Run Tests
+
+```bash
+python -m pytest
+```
+
+### Start the Application
+
+```bash
+python ./app.py
+```
+
+## Serverless Function for Email Verification
+
+The serverless function is triggered by Pub/Sub messages and sends verification emails to newly registered users via Mailgun.
+
+### Configuration
+
+Create a `.env` file in the `serverless` directory with the following configuration:
+
+```
+MAILGUN_VERSION = "<mailgun_api_version>"
+MAILGUN_API_KEY = "<mailgun_api_key>"
+DOMAIN_NAME     = "<domain_name>"
+DOMAIN_NAME_URL = "<complete_domain_name (including port and protocol)>"
+```
+
+## CI/CD with GitHub Actions
+
+### Available Workflows
+
+- `integration_test.yml`: Runs integration tests
+- `packer_build_image.yml`: Builds VM images with Packer
+- `packer_validate.yml`: Validates Packer configurations
+- `terraform_validate.yml`: Validates Terraform configurations
+
+### Required Secrets
+
+Add the following secrets to your GitHub repository:
+
+For integration tests:
+- `DB_PASSWORD`: Database password
+- `DB_USER`: Database username
+- `ENV_FILE`: Contents of the `.env` file
+
+For Packer workflows:
+- `GCP_CREDENTIALS_JSON`: Contents of the service account JSON key file
+- `PACKER_CONFIG`: Contents of the Packer variables file
+
+## License
+
+This project is licensed under the terms found in the LICENSE file.
